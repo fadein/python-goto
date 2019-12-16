@@ -182,3 +182,9 @@ def test_function_is_copy():
 
     assert newfunc is not func
     assert newfunc.foo == 'bar'
+
+
+def test_wd():
+    import weakref
+    wd = weakref.WeakKeyDictionary()
+    wd[(lambda: 0).__code__] = 2

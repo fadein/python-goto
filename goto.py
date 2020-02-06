@@ -44,8 +44,8 @@ _BYTECODE = _Bytecode()
 
 def _make_code(code, codestring):
     try:
-        return code.replace(co_code=codestring) # new in 3.8+
-    except:
+        return code.replace(co_code=codestring)  # new in 3.8+
+    except Exception:
         args = [
             code.co_argcount,  code.co_nlocals,     code.co_stacksize,
             code.co_flags,     codestring,          code.co_consts,

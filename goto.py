@@ -3,6 +3,7 @@ import struct
 import array
 import types
 import functools
+import sys
 
 
 try:
@@ -43,23 +44,23 @@ _BYTECODE = _Bytecode()
 
 
 def _make_code(code, codestring):
+    args = [
+        code.co_argcount,  code.co_nlocals,     code.co_stacksize,
+        code.co_flags,     codestring,          code.co_consts,
+        code.co_names,     code.co_varnames,    code.co_filename,
+        code.co_name,      code.co_firstlineno, code.co_lnotab,
+        code.co_freevars,  code.co_cellvars
+    ]
+
     try:
-        return code.replace(co_code=codestring) # new in 3.8+
-    except:
-        args = [
-            code.co_argcount,  code.co_nlocals,     code.co_stacksize,
-            code.co_flags,     codestring,          code.co_consts,
-            code.co_names,     code.co_varnames,    code.co_filename,
-            code.co_name,      code.co_firstlineno, code.co_lnotab,
-            code.co_freevars,  code.co_cellvars
-        ]
+        args.insert(1, code.co_kwonlyargcount)  # PY3
+        if sys.version_info[0] == 3 and sys.version_info[1] >= 8:
+            args.insert(1, code.co_posonlyargcount)  # PY3.8
 
-        try:
-            args.insert(1, code.co_kwonlyargcount)  # PY3
-        except AttributeError:
-            pass
+    except AttributeError:
+        pass
 
-        return types.CodeType(*args)
+    return types.CodeType(*args)
 
 
 def _parse_instructions(code):
